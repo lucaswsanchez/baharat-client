@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -136,7 +136,7 @@ const productosIniciales: Producto[] = [
 ];
 
 export default function Productos() {
-  const [productos, setProductos] = useState<Producto[]>(productosIniciales);
+  const [productos] = useState<Producto[]>(productosIniciales);
   const [busqueda, setBusqueda] = useState("");
   const [paginaActual, setPaginaActual] = useState(1);
   const productosPorPagina = 5;
