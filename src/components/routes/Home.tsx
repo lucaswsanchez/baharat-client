@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import {
   Card,
   CardContent,
@@ -25,12 +26,14 @@ import {
 export default function Home() {
   return (
     <div className="w-full space-y-6">
-      <h2 className="text-3xl font-bold">
-        Almacen Natural Baharat - Gestor de Inventario
-      </h2>
-      <p className="text-xl text-muted-foreground">
-        Resumen de inventario y descubri las acciones más importantes.
-      </p>
+      <section>
+        <h1 className="text-3xl font-bold">
+          Almacen Natural Baharat - Gestor de Inventario
+        </h1>
+        <p className="text-md text-muted-foreground">
+          Resumen general de tu inventario y acciones rápidas.
+        </p>
+      </section>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -78,29 +81,35 @@ export default function Home() {
       <div className="grid gap-6 md:grid-cols-2">
         <Card className="flex flex-col h-[350px]">
           <CardHeader>
-            <CardTitle>Acciones Rápidas</CardTitle>
+            <CardTitle className="text-xl">Acciones Rápidas</CardTitle>
             <CardDescription>
               Gestiona tu inventario de forma eficiente
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col justify-around gap-6 flex-grow">
-            <Button className="w-full p-6">
-              <Package className="mr-2 h-4 w-4" />
-              Añadir Producto
-            </Button>
-            <Button className="w-full p-6" variant="outline">
-              <ShoppingCart className="mr-2 h-4 w-4" />
-              Registrar Venta
-            </Button>
-            <Button className="w-full p-6" variant="outline">
-              <BarChart2 className="mr-2 h-4 w-4" />
-              Generar Informe
-            </Button>
+            <Link to="/productos">
+              <Button className="w-full p-6">
+                <Package className="mr-2 h-4 w-4" />
+                Añadir Producto
+              </Button>
+            </Link>
+            <Link to="/pedidos">
+              <Button className="w-full p-6" variant="outline">
+                <ShoppingCart className="mr-2 h-4 w-4" />
+                Registrar Venta
+              </Button>
+            </Link>
+            <Link to="/reportes">
+              <Button className="w-full p-6" variant="outline">
+                <BarChart2 className="mr-2 h-4 w-4" />
+                Generar Reporte
+              </Button>
+            </Link>
           </CardContent>
         </Card>
         <Card className="flex flex-col h-[350px]">
           <CardHeader>
-            <CardTitle>Productos Más Vendidos</CardTitle>
+            <CardTitle className="text-xl">Productos Más Vendidos</CardTitle>
             <CardDescription>Top 5 productos del mes</CardDescription>
           </CardHeader>
           <CardContent className="flex-grow justify-between px-4 ">

@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { ModeToggle } from "./ui/mode-toggle";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Toaster } from "@/components/ui/toaster";
 import {
   TooltipProvider,
   Tooltip,
@@ -39,6 +40,7 @@ import {
   ShoppingCart,
   Package,
   Slash,
+  BarChart2,
 } from "lucide-react";
 
 interface LayoutProps {
@@ -48,6 +50,7 @@ interface LayoutProps {
 const MENU_ITEMS = [
   { to: "/productos", icon: ShoppingCart, label: "Productos" },
   { to: "/pedidos", icon: Package, label: "Pedidos" },
+  { to: "/reportes", icon: BarChart2, label: "Reportes" },
 ];
 
 const Sidebar = React.memo(() => (
@@ -131,21 +134,21 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <ModeToggle />
         <span className="hidden text-right lg:block">
           <span className="block text-sm font-medium text-black dark:text-white">
-            Usuario Logeado
+            Lucas Sanchez
           </span>
-          <span className="block text-xs">Empleado</span>
+          <span className="block text-xs">Admin</span>
         </span>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Avatar className="cursor-pointer">
-              <AvatarImage src="https://scontent.fcnq1-1.fna.fbcdn.net/v/t39.30808-6/271890432_7552519748106760_5500137935410474387_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeH-f94ZTN7PeZ5qzEe578P_ixujZT-66QCLG6NlP7rpAKRtxoEGEoBjXn1UXE6wOlpan0bNvynz2bw6GpbUW8_Z&_nc_ohc=Zkm8IKcQ5hcQ7kNvgHTTB-c&_nc_zt=23&_nc_ht=scontent.fcnq1-1.fna&_nc_gid=A3nU2BzHjH7ZOaZN9GTQfVt&oh=00_AYDI9PIeq1_93B0sl9XO-cuBaWsSzgj2oXuH8JLIFncslg&oe=6719B0B8" />
-              <AvatarFallback>CN</AvatarFallback>
+              <AvatarImage src="https://scontent.fcnq1-1.fna.fbcdn.net/v/t39.30808-6/271890432_7552519748106760_5500137935410474387_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeH-f94ZTN7PeZ5qzEe578P_ixujZT-66QCLG6NlP7rpAKRtxoEGEoBjXn1UXE6wOlpan0bNvynz2bw6GpbUW8_Z&_nc_ohc=j7dPHFPScfwQ7kNvgEHju4e&_nc_zt=23&_nc_ht=scontent.fcnq1-1.fna&_nc_gid=Ahgr0dglDenxphtUkKTpu5E&oh=00_AYAd1WHX2dvSJvESDNvgq1Gr_eM41CfL57qce7lUujgDXg&oe=672F3938" />
+              <AvatarFallback>LS</AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Mi Cuenta</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <Link to="/profile">
+            <Link to="/perfil">
               <DropdownMenuItem>
                 <User className="mr-2 h-4 w-4" />
                 <span>Perfil</span>
@@ -163,7 +166,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   );
 
   return (
-    <div className="flex min-h-screen w-full flex-col bg-muted/40">
+    <div className="flex min-h-screen w-full flex-col bg-muted/20">
       <Sidebar />
       <div className="flex flex-col sm:gap-4 sm:pl-14">
         <header className="w-full sticky top-0 z-30 flex h-14 items-center justify-between border-b bg-background px-4 sm:static sm:px-6 sm:py-9">
@@ -201,6 +204,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           {children}
         </main>
       </div>
+      <Toaster />
     </div>
   );
 };

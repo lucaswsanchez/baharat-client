@@ -7,12 +7,14 @@ import {
 } from "react-router-dom";
 
 //Componentes
+import { ThemeProvider } from "./components/ui/theme-provider";
+import Layout from "./components/Layout";
+import Login from "./components/Login";
 import Home from "./components/routes/Home";
 import Productos from "./components/routes/Productos";
 import Pedidos from "./components/routes/Pedidos";
-import Layout from "./components/Layout";
-import Login from "./components/Login";
-import { ThemeProvider } from "./components/ui/theme-provider";
+import Reportes from "./components/routes/Reportes";
+import Perfil from "./components/routes/Perfil";
 
 const ProtectedRoutes = () => {
   const isAuthenticated = true;
@@ -27,6 +29,8 @@ const ProtectedRoutes = () => {
         <Route path="/" element={<Home />} />
         <Route path="/productos" element={<Productos />} />
         <Route path="/pedidos" element={<Pedidos />} />
+        <Route path="/reportes" element={<Reportes />} />
+        <Route path="/perfil" element={<Perfil />} />
       </Routes>
     </Layout>
   );

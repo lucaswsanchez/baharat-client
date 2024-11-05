@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { Plus, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Plus,
+  ChevronLeft,
+  ChevronRight,
+  Trash2,
+  RefreshCw,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -18,6 +24,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 type Producto = {
   id: number;
@@ -136,10 +149,22 @@ const productosIniciales: Producto[] = [
 ];
 
 export default function Productos() {
-  const [productos] = useState<Producto[]>(productosIniciales);
+  const [productos, setProductos] = useState<Producto[]>(productosIniciales);
   const [busqueda, setBusqueda] = useState("");
   const [paginaActual, setPaginaActual] = useState(1);
   const productosPorPagina = 5;
+
+  const [nuevoProducto, setNuevoProducto] = useState({
+    nombre: "",
+    categoria: "",
+    precio: 0,
+    stock: 0,
+  });
+
+  const [restock, setRestock] = useState({
+    id: 0,
+    cantidad: 0,
+  });
 
   // Filtrar productos por nombre o categoría
   const productosFiltrados = productos.filter(
@@ -158,6 +183,11 @@ export default function Productos() {
     indiceInicial + productosPorPagina
   );
 
+  // Productos con bajo stock
+  const productosBajoStock = productos.filter(
+    (producto) => producto.stock <= 20
+  );
+
   // Calcular totales
   const totalProductos = productos.length;
   const valorTotalInventario = productos.reduce(
@@ -170,6 +200,39 @@ export default function Productos() {
 
   const cambiarPagina = (pagina: number) => {
     setPaginaActual(pagina);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setNuevoProducto({
+      ...nuevoProducto,
+      [name]: name === "precio" || name === "stock" ? Number(value) : value,
+    });
+  };
+
+  const handleCategoriaChange = (value: string) => {
+    setNuevoProducto({ ...nuevoProducto, categoria: value });
+  };
+
+  const handleAñadirProducto = () => {
+    const nuevoId = Math.max(...productos.map((p) => p.id)) + 1;
+    setProductos([...productos, { id: nuevoId, ...nuevoProducto }]);
+    setNuevoProducto({ nombre: "", categoria: "", precio: 0, stock: 0 });
+  };
+
+  const handleEliminarProducto = (id: number) => {
+    setProductos(productos.filter((producto) => producto.id !== id));
+  };
+
+  const handleRestock = () => {
+    setProductos(
+      productos.map((producto) =>
+        producto.id === restock.id
+          ? { ...producto, stock: producto.stock + restock.cantidad }
+          : producto
+      )
+    );
+    setRestock({ id: 0, cantidad: 0 });
   };
 
   return (
@@ -220,7 +283,7 @@ export default function Productos() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <form className="space-y-4">
+          <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
             <div className="flex flex-wrap -mx-2">
               <div className="w-full md:w-1/2 px-2 mb-4">
                 <label
@@ -229,7 +292,13 @@ export default function Productos() {
                 >
                   Nombre del Producto
                 </label>
-                <Input id="nombre" placeholder="Nombre del producto" />
+                <Input
+                  id="nombre"
+                  name="nombre"
+                  placeholder="Nombre del producto"
+                  value={nuevoProducto.nombre}
+                  onChange={handleInputChange}
+                />
               </div>
               <div className="w-full md:w-1/2 px-2 mb-4">
                 <label
@@ -238,7 +307,10 @@ export default function Productos() {
                 >
                   Categoría
                 </label>
-                <Select>
+                <Select
+                  onValueChange={handleCategoriaChange}
+                  value={nuevoProducto.categoria}
+                >
                   <SelectTrigger id="categoria">
                     <SelectValue placeholder="Seleccionar categoría" />
                   </SelectTrigger>
@@ -263,9 +335,12 @@ export default function Productos() {
                 <Input
                   type="number"
                   id="precio"
+                  name="precio"
                   placeholder="Precio"
                   min="0"
                   step="0.01"
+                  value={nuevoProducto.precio}
+                  onChange={handleInputChange}
                 />
               </div>
               <div className="w-full md:w-1/2 px-2 mb-4">
@@ -278,12 +353,15 @@ export default function Productos() {
                 <Input
                   type="number"
                   id="stock"
+                  name="stock"
                   placeholder="Stock inicial"
                   min="0"
+                  value={nuevoProducto.stock}
+                  onChange={handleInputChange}
                 />
               </div>
             </div>
-            <Button className="w-full">
+            <Button className="w-full" onClick={handleAñadirProducto}>
               <Plus className="mr-2 h-4 w-4" /> Añadir Producto
             </Button>
           </form>
@@ -291,7 +369,7 @@ export default function Productos() {
       </Card>
 
       {/* Tabla de productos */}
-      <Card>
+      <Card className="mb-8">
         <CardHeader>
           <CardTitle className="text-xl font-medium">
             Lista de Productos
@@ -313,6 +391,7 @@ export default function Productos() {
                 <TableHead>Categoría</TableHead>
                 <TableHead>Precio</TableHead>
                 <TableHead>Stock</TableHead>
+                <TableHead>Acciones</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -323,6 +402,47 @@ export default function Productos() {
                   <TableCell>{producto.categoria}</TableCell>
                   <TableCell>${producto.precio.toFixed(2)}</TableCell>
                   <TableCell>{producto.stock}</TableCell>
+                  <TableCell>
+                    <div className="flex space-x-2">
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button variant="outline" size="sm">
+                            <RefreshCw className="h-4 w-4 mr-2" />
+                            Restock
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Restock de Producto</DialogTitle>
+                          </DialogHeader>
+                          <div className="py-4">
+                            <Input
+                              type="number"
+                              placeholder="Cantidad a añadir"
+                              value={restock.cantidad}
+                              onChange={(e) =>
+                                setRestock({
+                                  id: producto.id,
+                                  cantidad: Number(e.target.value),
+                                })
+                              }
+                              min="1"
+                            />
+                          </div>
+                          <Button onClick={handleRestock}>
+                            Confirmar Restock
+                          </Button>
+                        </DialogContent>
+                      </Dialog>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleEliminarProducto(producto.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -352,6 +472,37 @@ export default function Productos() {
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Tabla de productos con bajo stock */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-xl font-medium">
+            Productos con Bajo Stock
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>ID</TableHead>
+                <TableHead>Nombre</TableHead>
+                <TableHead>Categoría</TableHead>
+                <TableHead>Stock</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {productosBajoStock.map((producto) => (
+                <TableRow key={producto.id}>
+                  <TableCell>{producto.id}</TableCell>
+                  <TableCell>{producto.nombre}</TableCell>
+                  <TableCell>{producto.categoria}</TableCell>
+                  <TableCell>{producto.stock}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
     </div>

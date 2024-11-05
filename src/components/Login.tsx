@@ -1,16 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { GridPattern } from "@/components/ui/grid-pattern";
+import { cn } from "@/lib/utils";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -23,16 +18,29 @@ export default function Login() {
   };
 
   return (
-    <div className="relative flex justify-center items-center h-screen bg-background">
-      <Card className="w-full max-w-md p-6 space-y-4 ms: w-10/12 ms: p-1 ms: space-y-1 ">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold">Bienvenido</CardTitle>
-          <CardDescription>
-            Ingresa tu usuario y contraseña para acceder a tu cuenta.
-          </CardDescription>
-        </CardHeader>
-        <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-4">
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background md:shadow-xl">
+      <Card className="z-10 w-11/12 grid grid-cols-1 text-sm md:max-w-4xl md:grid-cols-2 overflow-hidden">
+        <div className="hidden md:block">
+          <img
+            alt="Inventory management"
+            className="object-cover w-full h-full"
+            height="100%"
+            src="https://www.ideostock.com/admin/upload/pourquoi-utiliser-logiciel-gestion-de-stock.jpg"
+            style={{
+              aspectRatio: "1/1",
+              objectFit: "cover",
+            }}
+            width="100%"
+          />
+        </div>
+        <div className=" p-4 py-8 space-y-6 flex flex-col justify-center items-center md:p-8">
+          <div className="space-y-2 text-center">
+            <h1 className="text-3xl font-bold">Gestor de Inventario</h1>
+            <p className="text-gray-500 dark:text-gray-400">
+              Ingresa a tu cuenta para administrar tu inventario
+            </p>
+          </div>
+          <form className="space-y-4 w-full" onSubmit={handleSubmit}>
             <div className="space-y-2">
               <Label htmlFor="username">Usuario</Label>
               <Input
@@ -55,14 +63,17 @@ export default function Login() {
                 required
               />
             </div>
-          </CardContent>
-          <CardFooter>
             <Button className="w-full" type="submit">
               Iniciar sesión
             </Button>
-          </CardFooter>
-        </form>
+          </form>
+        </div>
       </Card>
+      <GridPattern
+        className={cn(
+          "[mask-image:linear-gradient(to_bottom_left,white,transparent,transparent)] "
+        )}
+      />
     </div>
   );
 }
